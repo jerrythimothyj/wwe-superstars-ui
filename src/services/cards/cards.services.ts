@@ -10,7 +10,7 @@ export const shuffleCards = (cardsData: any) => {
     return _.shuffle(cardsDataCopy)
 }
 
-export const distributeCards = (cardsData: any, players = 2) => {
+export const distributeCards = (cardsData: any, players = 5) => {
     playersCards = []
     for (let ictr = 0; ictr < players; ictr++) {
         playersCards.push([])
@@ -24,8 +24,8 @@ export const distributeCards = (cardsData: any, players = 2) => {
     return playersCards;
 }
 
-export const drawDealtCards = (props: any) => {
-    const dealtCards: any = _.map(playersCards, (playerCards) => {
+export const drawDealtCards = (distributedCardsData: any) => {
+    const dealtCards: any = _.map(distributedCardsData, (playerCards) => {
         // return (playerCards[props.index])
         return _.last(playerCards)
     })
@@ -33,7 +33,7 @@ export const drawDealtCards = (props: any) => {
     playersCards = _.map(playersCards, (playerCards: any) => {
         return _.remove(playerCards, (card: any) => {
             return _.findIndex(dealtCards, (dealtCard: any) => {
-                return dealtCard.id === card.id
+                return dealtCard && card && dealtCard.id === card.id
             }) === -1
         })
     })
@@ -49,11 +49,12 @@ export const findDealWinner = (dealtCards: any, props: any, property: string) =>
     console.log('dealtCards=', dealtCards)
 
     const whichCardIsMax: any = _.maxBy(dealtCards, (card) => {
-        return card[property]
+        return card && card[property]
     })
 
     const whichPlayerIsMax: number = _.findIndex(dealtCards, (card: any) => {
-        return card.id === whichCardIsMax.id
+        console.log('card=', card, 'whichCardIsMax=', whichCardIsMax);
+        return card && whichCardIsMax && card.id === whichCardIsMax.id
     })
 
     return {
@@ -64,7 +65,16 @@ export const findDealWinner = (dealtCards: any, props: any, property: string) =>
 
 export const processDealtCards = (distributedCardsData: any, dealtCards: any, dealWinningPlayer: number) => {
     playersCards = deepCopy(distributedCardsData)
-    playersCards[dealWinningPlayer] = _.concat(dealtCards, distributedCardsData[dealWinningPlayer])
-    console.log('playersCards=', playersCards);
+    playersCards[dealWinningPlayer] = _.filter(_.concat(dealtCards, distributedCardsData[dealWinningPlayer]), (card) => {
+        return !_.isUndefined(card)
+    })
+
     return playersCards;
+}
+
+export const findFinalWinner = (distributedCardsData: any) => {
+    const winnerPlayerNumber = _.findIndex(distributedCardsData, (distributedCards: any) => {
+        return distributedCards.length === cardsData.length
+    })
+    return winnerPlayerNumber;
 }
