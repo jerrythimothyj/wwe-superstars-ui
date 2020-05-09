@@ -1,0 +1,9 @@
+.cropped1 {
+    height: 10rem; /* height of container */
+    object-fit: none;
+    object-position: 50% 0%;
+}
+
+.card-body {
+    padding: 0
+}
