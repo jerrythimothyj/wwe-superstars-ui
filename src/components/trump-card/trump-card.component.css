@@ -1,9 +1,22 @@
 .cropped1 {
-    height: 10rem; /* height of container */
+    height: 18rem; /* height of container */
     object-fit: none;
     object-position: 50% 0%;
+    background: black;
 }
 
 .card-body {
-    padding: 0
+    padding: 0;
+    font-size: 1rem;
+}
+
+.trump-card {
+    width: 20rem;
+    margin: 1rem;
+    margin-top: -430px;
+    border: 3px solid white;
+}
+
+.trump-card:first-child {
+    margin-top: 0px;
 }

@@ -26,7 +26,8 @@ export const distributeCards = (cardsData: any, players = 2) => {
 
 export const drawDealtCards = (props: any) => {
     const dealtCards: any = _.map(playersCards, (playerCards) => {
-        return (playerCards[props.index])
+        // return (playerCards[props.index])
+        return _.last(playerCards)
     })
 
     playersCards = _.map(playersCards, (playerCards: any) => {
@@ -63,7 +64,7 @@ export const findDealWinner = (dealtCards: any, props: any, property: string) =>
 
 export const processDealtCards = (distributedCardsData: any, dealtCards: any, dealWinningPlayer: number) => {
     playersCards = deepCopy(distributedCardsData)
-    playersCards[dealWinningPlayer] = _.concat(distributedCardsData[dealWinningPlayer], dealtCards)
+    playersCards[dealWinningPlayer] = _.concat(dealtCards, distributedCardsData[dealWinningPlayer])
     console.log('playersCards=', playersCards);
     return playersCards;
 }

@@ -1,3 +1,7 @@
-.collapse.show {
+.dealt-cards .card {
+    margin-top: 0px !important;
+}
+
+.dealt-cards .collapse.show {
     display: flex;
 }

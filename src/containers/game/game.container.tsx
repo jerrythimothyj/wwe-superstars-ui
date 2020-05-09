@@ -11,7 +11,7 @@ const Game = () => {
     const [distributedCardsData, setDistributedCardsData] = useState([])
     const [dealtCards, setDealtCardsData] = useState([])
     const [dealWinningCard, setDealWinningCard] = useState({ name: '' })
-    const [dealWinningPlayer, setDealWinningPlayer] = useState(-1)
+    const [dealWinningPlayer, setDealWinningPlayer] = useState(0)
 
     const handleShuffleButtonClick = () => {
         setCurrentCardsData(shuffleCards(currentCardsData))
@@ -42,7 +42,7 @@ const Game = () => {
         <div> <Button onClick={handleShuffleButtonClick}>Shuffle</Button>
             <Button onClick={handleDistributeButtonClick}>Distribute</Button>
         </div>
-        <div className="d-flex flex-column">
+        <div className="d-flex flex-row justify-content-between flex-grow-1 w-100">
 
             {
                 _.map(distributedCardsData, (cardsData, index: any) => {
@@ -51,25 +51,29 @@ const Game = () => {
                             Player {index}
                         </Accordion.Toggle>
                         <Accordion.Collapse eventKey={index}>
-                            <Cards cardsData={cardsData} dealCard={dealCard} />
+                            <Cards cardsData={cardsData} dealCard={dealCard} currentPlayerNumber={dealWinningPlayer} playerNumber={index} />
                         </Accordion.Collapse>
                     </Accordion>
 
                 })
             }
+
+        </div>
+        {distributedCardsData.length > 0 && <div className="dealt-cards">
             <Accordion defaultActiveKey={distributedCardsData.length + ''} key={distributedCardsData.length}>
                 <Accordion.Toggle as={Button} variant="link" eventKey={distributedCardsData.length + ''}>Dealt Cards</Accordion.Toggle>
+                {dealWinningPlayer > -1 && <Alert variant="success">
+                    {dealWinningCard.name} --- Player {dealWinningPlayer}
+                </Alert>}
                 <Accordion.Collapse eventKey={distributedCardsData.length + ''}>
                     <>
-                        <Cards cardsData={dealtCards} />
-                        <Alert variant="success">
-                            {dealWinningCard.name} --- Player {dealWinningPlayer}
-                        </Alert>
-                        <Button onClick={handleNextDealButtonClick}>Next deal</Button>
+                        <Cards cardsData={dealtCards} currentPlayer={-1} />
+
+                        {dealWinningPlayer > -1 && <Button onClick={handleNextDealButtonClick}>Next deal</Button>}
                     </>
                 </Accordion.Collapse>
             </Accordion>
-        </div>
+        </div>}
 
         {/* <Cards cardsData={currentCardsData} /> */}
 
