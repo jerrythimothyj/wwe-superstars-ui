@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import Cards from "../../components/cards/cards.component";
 import { Button, Alert } from "react-bootstrap";
 import _ from "lodash";
@@ -6,45 +6,54 @@ import { processDealtCards, drawDealtCards, findDealWinner, cardsData, shuffleCa
 import "./game.container.css"
 import MainCards from "../../components/main-cards/main-cards.component";
 
+import { useSelector, useDispatch } from 'react-redux'
+import { setCurrentCardsData, setDistributedCardsData, setDealtCardsData, setDealWinningCard, setDealWinningPlayer, setDealtProperty, setFinalWinner } from './game.actions'
+
 const Game = () => {
-    const [currentCardsData, setCurrentCardsData] = useState(cardsData)
-    const [distributedCardsData, setDistributedCardsData] = useState([])
-    const [dealtCards, setDealtCardsData] = useState([])
-    const [dealWinningCard, setDealWinningCard] = useState({ name: '' })
-    const [dealWinningPlayer, setDealWinningPlayer] = useState(0)
-    const [dealtProperty, setDealtProperty] = useState('')
-    const [finalWinner, setFinalWinner] = useState(-1)
+
+    const currentCardsData = useSelector((state: any) => state.gameReducer.currentCardsData)
+    const distributedCardsData = useSelector((state: any) => state.gameReducer.distributedCardsData)
+    const dealtCards = useSelector((state: any) => state.gameReducer.dealtCards)
+    const dealWinningCard = useSelector((state: any) => state.gameReducer.dealWinningCard)
+    const dealWinningPlayer = useSelector((state: any) => state.gameReducer.dealWinningPlayer)
+    const dealtProperty = useSelector((state: any) => state.gameReducer.dealtProperty)
+    const finalWinner = useSelector((state: any) => state.gameReducer.finalWinner)
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(setCurrentCardsData(cardsData));
+    }, [setCurrentCardsData]);
 
     const handleShuffleButtonClick = () => {
-        setCurrentCardsData(shuffleCards(currentCardsData))
+        dispatch(setCurrentCardsData(shuffleCards(currentCardsData)))
     }
 
     const handleDistributeButtonClick = () => {
-        setDistributedCardsData(distributeCards(currentCardsData))
-        setDealtCardsData([])
-        setDealWinningCard({ name: '' })
-        setDealWinningPlayer(0)
+        dispatch(setDistributedCardsData(distributeCards(currentCardsData)))
+        dispatch(setDealtCardsData([]))
+        dispatch(setDealWinningCard({ name: '' }))
+        dispatch(setDealWinningPlayer(0))
     }
 
     const handleNextDealButtonClick = () => {
         const currentDistributedCardsData = processDealtCards(distributedCardsData, dealtCards, dealWinningPlayer)
         const winnerPlayerNumber = findFinalWinner(currentDistributedCardsData)
-        setFinalWinner(winnerPlayerNumber)
-        setDistributedCardsData(currentDistributedCardsData)
-        setDealtCardsData([])
-        setDealWinningCard({ name: '' })
+        dispatch(setFinalWinner(winnerPlayerNumber))
+        dispatch(setDistributedCardsData(currentDistributedCardsData))
+        dispatch(setDealtCardsData([]))
+        dispatch(setDealWinningCard({ name: '' }))
 
     }
 
     const dealCard = (props: any, property: string) => {
-        setDealtProperty(property)
+        dispatch(setDealtProperty(property))
         const { dealtCards, remainingCards } = drawDealtCards(distributedCardsData)
         const { dealWinningCard, dealWinningPlayer } = findDealWinner(dealtCards, props, property)
-        setDealtCardsData(dealtCards)
-        setDistributedCardsData(remainingCards)
-        setDealWinningCard(dealWinningCard)
-        setDealWinningPlayer(dealWinningPlayer)
-
+        dispatch(setDealtCardsData(dealtCards))
+        dispatch(setDistributedCardsData(remainingCards))
+        dispatch(setDealWinningCard(dealWinningCard))
+        dispatch(setDealWinningPlayer(dealWinningPlayer))
     }
 
     return <>
